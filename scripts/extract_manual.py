@@ -2,14 +2,20 @@
 
 import json
 import re
+import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
 from pypdf import PdfReader
 
-
 ROOT = Path(__file__).resolve().parent.parent
-PDF_PATH = ROOT / 'epower nissan manual.pdf'
+sys.path.insert(0, str(ROOT))
+
+from manual_utils import detect_manual_metadata, load_dotenv, resolve_manual_pdf
+
+
+load_dotenv(ROOT / '.env')
+PDF_PATH = resolve_manual_pdf(ROOT)
 OUTPUT_DIR = ROOT / 'data'
 PAGES_PATH = OUTPUT_DIR / 'manual_pages.json'
 CHUNKS_PATH = OUTPUT_DIR / 'manual_chunks.json'
@@ -104,6 +110,8 @@ def build_chunks(page_number: int, text: str) -> list[ManualChunk]:
 def main() -> None:
     OUTPUT_DIR.mkdir(exist_ok=True)
     reader = PdfReader(str(PDF_PATH))
+    preview_text = '\n'.join((reader.pages[idx].extract_text() or '') for idx in range(min(3, len(reader.pages))))
+    metadata = detect_manual_metadata(preview_text, PDF_PATH.name)
 
     pages: list[ManualPage] = []
     chunks: list[ManualChunk] = []
@@ -114,31 +122,29 @@ def main() -> None:
         pages.append(ManualPage(page=idx, preview=preview, text=text))
         chunks.extend(build_chunks(idx, text))
 
-    PAGES_PATH.write_text(
-        json.dumps(
-            {
-                'source_pdf': PDF_PATH.name,
-                'page_count': len(pages),
-                'pages': [asdict(page) for page in pages],
-            },
-            ensure_ascii=True,
-            indent=2,
-        ),
-        encoding='utf-8',
-    )
-    CHUNKS_PATH.write_text(
-        json.dumps(
-            {
-                'source_pdf': PDF_PATH.name,
-                'chunk_count': len(chunks),
-                'chunks': [asdict(chunk) for chunk in chunks],
-            },
-            ensure_ascii=True,
-            indent=2,
-        ),
-        encoding='utf-8',
-    )
+    pages_payload = {
+        'source_pdf': PDF_PATH.name,
+        'source_pdf_path': str(PDF_PATH),
+        'manual_title': metadata['manual_title'],
+        'model_code': metadata['model_code'],
+        'manual_note': metadata['manual_note'],
+        'page_count': len(pages),
+        'pages': [asdict(page) for page in pages],
+    }
+    chunks_payload = {
+        'source_pdf': PDF_PATH.name,
+        'source_pdf_path': str(PDF_PATH),
+        'manual_title': metadata['manual_title'],
+        'model_code': metadata['model_code'],
+        'manual_note': metadata['manual_note'],
+        'chunk_count': len(chunks),
+        'chunks': [asdict(chunk) for chunk in chunks],
+    }
 
+    PAGES_PATH.write_text(json.dumps(pages_payload, ensure_ascii=True, indent=2), encoding='utf-8')
+    CHUNKS_PATH.write_text(json.dumps(chunks_payload, ensure_ascii=True, indent=2), encoding='utf-8')
+
+    print(f"Using manual: {metadata['manual_title']} ({PDF_PATH.name})")
     print(f'Wrote {len(pages)} pages to {PAGES_PATH}')
     print(f'Wrote {len(chunks)} chunks to {CHUNKS_PATH}')
 

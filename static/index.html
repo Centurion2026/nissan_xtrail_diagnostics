@@ -1,41 +1,47 @@
 ﻿<!doctype html>
-<html lang="sr">
+<html lang="bs">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nissan e-POWER Dijagnostika</title>
+    <title>Nissan e-POWER Manual Asistent</title>
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
     <main class="shell">
-      <section class="hero">
-        <p class="eyebrow">GitHub-ready lokalna dijagnostika</p>
-        <h1>Nissan e-POWER dijagnostički asistent</h1>
-        <p class="lede">
-          Upiši problem, poruku sa ekrana ili naziv lampice. Po želji dodaj sliku ili screenshot da aplikacija pokuša da prepozna šta je prikazano.
-        </p>
-        <div id="configBanner" class="banner muted">Učitavanje konfiguracije...</div>
-      </section>
-
-      <section class="panel form-panel">
-        <label for="query" class="label">Opis problema ili komande</label>
-        <textarea id="query" placeholder="Primjer: upalila se narandžasta lampica motora i piše Engine malfunction Service now"></textarea>
-
-        <div class="upload-row">
-          <div>
-            <label for="image" class="label">Slika ili screenshot</label>
-            <input id="image" type="file" accept="image/*" />
+      <section class="hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Lokalni manual navigator</p>
+          <h1>Nissan X-Trail e-POWER asistent za priručnik</h1>
+          <p class="lede">
+            Postavi pitanje na bosanskom jeziku o komandama, lampicama, potrošnji, ekranima ili održavanju. Aplikacija pretražuje lokalni
+            Nissan manual, pronalazi najrelevantniju stranicu i prikazuje izrez iz PDF-a gdje se traženi dio nalazi.
+          </p>
+          <div class="hero-actions">
+            <a id="manualBtn" class="btn btn-secondary" href="/manual.pdf" target="_blank" rel="noopener">Otvori PDF manual</a>
+            <span class="hero-chip">Lokalno • bez cloud analize</span>
           </div>
-          <div id="imageMeta" class="image-meta">Nema odabrane slike.</div>
+          <div id="configBanner" class="banner muted">Učitavanje konfiguracije...</div>
         </div>
 
+        <aside class="hero-visual panel">
+          <img class="hero-car" src="/xtrail-hero.jpg" alt="Nissan X-Trail e-POWER" />
+          <div class="hero-visual-copy">
+            <p class="label">Aktivno vozilo</p>
+            <h2>X-Trail e-POWER</h2>
+            <p>Brži pristup komandama, ekranima i referencama iz službenog manuala.</p>
+          </div>
+        </aside>
+      </section>
+
+      <section class="panel form-panel accent-panel">
+        <label for="query" class="label">Šta tražiš u vozilu?</label>
+        <textarea id="query" placeholder="Primjer: kako zamijeniti prednju sijalicu, kako resetovati servis, gdje se mijenja jezik displeja, kako uključiti lane assist"></textarea>
         <div class="actions">
-          <button id="searchBtn" class="btn btn-secondary">Analiziraj tekst</button>
-          <button id="analyzeBtn" class="btn btn-primary">Analiziraj tekst + sliku</button>
+          <button id="searchBtn" class="btn btn-primary">Pronađi u priručniku</button>
         </div>
       </section>
 
-      <section id="resultPanel" class="panel hidden">
+      <section id="resultPanel" class="panel hidden result-panel">
         <div class="result-head">
           <div>
             <p class="label">Rezultat</p>
@@ -48,19 +54,38 @@
         <div id="notes" class="notes"></div>
       </section>
 
+      <section id="previewPanel" class="panel hidden preview-panel">
+        <div class="preview-head">
+          <div>
+            <p class="label">Prikaz iz manuala</p>
+            <h3 id="previewTitle">-</h3>
+            <p id="previewMeta" class="preview-meta"></p>
+          </div>
+          <div class="preview-actions">
+            <a id="previewLink" class="btn btn-secondary" target="_blank" rel="noopener">Otvori ovu PDF stranicu</a>
+            <a class="btn btn-secondary" href="/manual.pdf" target="_blank" rel="noopener">Cijeli PDF</a>
+          </div>
+        </div>
+        <div class="preview-frame">
+          <img id="previewImage" alt="Izvod iz Nissan priručnika" />
+        </div>
+      </section>
+
       <section id="matchesPanel" class="panel hidden">
         <div class="grid two-col">
           <div>
-            <h3>Najbliže lampice / upozorenja</h3>
+            <h3>Povezana upozorenja</h3>
             <div id="warningMatches" class="stack"></div>
           </div>
           <div>
-            <h3>Reference iz priručnika</h3>
+            <h3>Najrelevantnije reference</h3>
             <div id="chunkMatches" class="stack"></div>
           </div>
         </div>
       </section>
     </main>
+
+    <footer class="site-footer">Autor: A. Catovic</footer>
 
     <script src="/app.js"></script>
   </body>

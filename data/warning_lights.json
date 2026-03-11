@@ -1,6 +1,6 @@
 ﻿{
   "source_manual": "epower nissan manual.pdf",
-  "note": "The provided PDF in this workspace identifies itself as a Nissan Qashqai manual, not X-Trail.",
+  "note": "The app reads active manual metadata from the extracted JSON files. Regenerate the data after changing MANUAL_PDF or replacing the PDF.",
   "warnings": [
     {
       "id": "e_power_system_warning",
@@ -94,3 +94,4 @@
     }
   ]
 }
+

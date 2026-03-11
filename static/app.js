@@ -1,8 +1,7 @@
 ﻿const queryEl = document.getElementById('query');
-const imageEl = document.getElementById('image');
-const imageMetaEl = document.getElementById('imageMeta');
 const configBannerEl = document.getElementById('configBanner');
 const resultPanelEl = document.getElementById('resultPanel');
+const previewPanelEl = document.getElementById('previewPanel');
 const matchesPanelEl = document.getElementById('matchesPanel');
 const resultTitleEl = document.getElementById('resultTitle');
 const severityBadgeEl = document.getElementById('severityBadge');
@@ -11,18 +10,19 @@ const resultNextStepsEl = document.getElementById('resultNextSteps');
 const notesEl = document.getElementById('notes');
 const warningMatchesEl = document.getElementById('warningMatches');
 const chunkMatchesEl = document.getElementById('chunkMatches');
+const previewTitleEl = document.getElementById('previewTitle');
+const previewMetaEl = document.getElementById('previewMeta');
+const previewImageEl = document.getElementById('previewImage');
+const previewLinkEl = document.getElementById('previewLink');
 
 function renderConfig(config) {
-  const mode = config.vision_enabled
-    ? `Vision analiza je uključena preko modela ${config.model}.`
-    : 'Vision analiza nije aktivna dok ne postaviš OPENAI_API_KEY u okruženje servera.';
-
   configBannerEl.className = 'banner';
-  configBannerEl.textContent = `${mode} Baza: ${config.warning_count} lampica i ${config.chunk_count} sekcija iz priručnika. Napomena: ${config.manual_note}`;
+  configBannerEl.textContent = `Aktivni manual: ${config.manual_title}. Baza: ${config.warning_count} lampica i ${config.chunk_count} sekcija iz priručnika.`;
 }
 
 function renderError(message) {
   resultPanelEl.classList.remove('hidden');
+  previewPanelEl.classList.add('hidden');
   matchesPanelEl.classList.add('hidden');
   resultTitleEl.textContent = 'Greška';
   severityBadgeEl.textContent = 'Provjeri unos';
@@ -44,7 +44,7 @@ function renderMatches(matches) {
   chunkMatchesEl.innerHTML = '';
 
   if (!matches.warnings.length) {
-    warningMatchesEl.append(card('<h4>Nema direktnog pogotka</h4><p>Pokušaj unijeti tačan naziv lampice ili tekst poruke sa ekrana.</p>'));
+    warningMatchesEl.append(card('<h4>Nema direktnog warning pogotka</h4><p>To je očekivano kod pitanja o komandama, potrošnji ili zamjeni dijelova.</p>'));
   }
 
   for (const item of matches.warnings) {
@@ -58,7 +58,7 @@ function renderMatches(matches) {
   }
 
   if (!matches.chunks.length) {
-    chunkMatchesEl.append(card('<h4>Nema relevantne reference</h4><p>Upit je previše općenit ili nije pronađen u priručniku.</p>'));
+    chunkMatchesEl.append(card('<h4>Nema dovoljno jake reference</h4><p>Pokušaj preciznije: npr. "kako zamijeniti prednju sijalicu" ili "gdje se mijenja prikaz instrument table".</p>'));
   }
 
   for (const item of matches.chunks) {
@@ -74,8 +74,22 @@ function renderMatches(matches) {
   matchesPanelEl.classList.remove('hidden');
 }
 
+function renderPreview(preview) {
+  if (!preview) {
+    previewPanelEl.classList.add('hidden');
+    return;
+  }
+
+  previewTitleEl.textContent = preview.title;
+  previewMetaEl.textContent = `Stranica ${preview.page}. ${preview.caption}`;
+  previewImageEl.src = preview.image_url;
+  previewImageEl.alt = `Prikaz iz manuala, stranica ${preview.page}`;
+  previewLinkEl.href = preview.pdf_url;
+  previewPanelEl.classList.remove('hidden');
+}
+
 function renderDiagnosis(payload) {
-  const { diagnosis, matches, vision_used: visionUsed } = payload;
+  const { diagnosis, matches, preview } = payload;
   resultPanelEl.classList.remove('hidden');
   resultTitleEl.textContent = diagnosis.title;
   severityBadgeEl.textContent = diagnosis.severity_label;
@@ -88,20 +102,13 @@ function renderDiagnosis(payload) {
   confidence.textContent = `Pouzdanost procjene: ${diagnosis.confidence}.`;
   notesEl.append(confidence);
 
-  if (typeof visionUsed === 'boolean') {
-    const mode = document.createElement('p');
-    mode.textContent = visionUsed
-      ? 'Slika je analizirana uz vision model.'
-      : 'Slika nije vizuelno analizirana; korišten je samo tekstualni opis i lokalna baza znanja.';
-    notesEl.append(mode);
-  }
-
   for (const note of diagnosis.notes || []) {
     const p = document.createElement('p');
     p.textContent = note;
     notesEl.append(p);
   }
 
+  renderPreview(preview);
   renderMatches(matches);
 }
 
@@ -123,7 +130,7 @@ async function loadConfig() {
   }
 }
 
-async function analyzeText() {
+async function analyzeQuery() {
   const query = queryEl.value.trim();
   try {
     const payload = await fetchJson('/api/search', {
@@ -137,36 +144,11 @@ async function analyzeText() {
   }
 }
 
-async function analyzeImage() {
-  const file = imageEl.files[0];
-  if (!file) {
-    renderError('Odaberi sliku ili screenshot prije analize slike.');
-    return;
+document.getElementById('searchBtn').addEventListener('click', analyzeQuery);
+queryEl.addEventListener('keydown', (event) => {
+  if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+    analyzeQuery();
   }
-
-  const form = new FormData();
-  form.append('query', queryEl.value.trim());
-  form.append('image', file);
-
-  try {
-    const payload = await fetchJson('/api/analyze-image', {
-      method: 'POST',
-      body: form,
-    });
-    renderDiagnosis(payload);
-  } catch (error) {
-    renderError(error.message);
-  }
-}
-
-imageEl.addEventListener('change', () => {
-  const file = imageEl.files[0];
-  imageMetaEl.textContent = file
-    ? `${file.name} | ${(file.size / 1024 / 1024).toFixed(2)} MB | ${file.type || 'nepoznat tip'}`
-    : 'Nema odabrane slike.';
 });
-
-document.getElementById('searchBtn').addEventListener('click', analyzeText);
-document.getElementById('analyzeBtn').addEventListener('click', analyzeImage);
 
 loadConfig();
