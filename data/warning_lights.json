@@ -1,0 +1,96 @@
+﻿{
+  "source_manual": "epower nissan manual.pdf",
+  "note": "The provided PDF in this workspace identifies itself as a Nissan Qashqai manual, not X-Trail.",
+  "warnings": [
+    {
+      "id": "e_power_system_warning",
+      "name": "e-POWER system warning light",
+      "aliases": ["e-power warning", "e-power system", "hybrid warning", "orange e-power light"],
+      "severity": "high",
+      "summary": "Possible malfunction in the e-POWER system.",
+      "driver_action": "Stop the vehicle in a safe place immediately and contact a Nissan dealer.",
+      "manual_pages": [89, 94]
+    },
+    {
+      "id": "mil",
+      "name": "Malfunction indicator light (MIL)",
+      "aliases": ["check engine", "engine malfunction", "mil", "orange engine light"],
+      "severity": "high",
+      "summary": "Engine control system malfunction or misfire.",
+      "driver_action": "If power is reduced, stop the system and tow the vehicle. Otherwise avoid speeds above 70 km/h and get service immediately.",
+      "manual_pages": [90, 100]
+    },
+    {
+      "id": "master_warning",
+      "name": "Master warning light",
+      "aliases": ["master warning", "triangle warning", "general warning"],
+      "severity": "medium",
+      "summary": "General fault or urgent message in the vehicle information display.",
+      "driver_action": "Read the vehicle information display and follow the displayed instruction. Common causes include door open, parking brake, tyre pressure, key issues, and system faults.",
+      "manual_pages": [89, 96]
+    },
+    {
+      "id": "engine_oil_pressure",
+      "name": "Engine oil pressure warning light",
+      "aliases": ["oil pressure", "red oil can", "engine oil warning"],
+      "severity": "critical",
+      "summary": "Engine oil pressure may be too low.",
+      "driver_action": "Stop the vehicle safely as soon as possible, stop the e-POWER system immediately, and call a Nissan dealer or qualified workshop.",
+      "manual_pages": [89, 94]
+    },
+    {
+      "id": "low_tyre_pressure",
+      "name": "Low tyre pressure warning light",
+      "aliases": ["tpms", "low tyre pressure", "flat tyre", "tyre pressure warning"],
+      "severity": "high",
+      "summary": "One or more tyres are under-inflated or the TPMS has a fault.",
+      "driver_action": "Stop safely, check all four tyres, inflate to recommended cold pressure, then drive above 25 km/h to allow TPMS reset. If the light flashes for about 1 minute, service the TPMS.",
+      "manual_pages": [89, 95, 96]
+    },
+    {
+      "id": "abs",
+      "name": "ABS warning light",
+      "aliases": ["abs", "anti-lock brake", "anti lock braking"],
+      "severity": "medium",
+      "summary": "ABS may not be functioning correctly.",
+      "driver_action": "Drive carefully and have the system checked by a Nissan dealer or qualified workshop.",
+      "manual_pages": [89, 92]
+    },
+    {
+      "id": "brake_red",
+      "name": "Brake warning light (red)",
+      "aliases": ["red brake warning", "brake system red", "parking brake warning"],
+      "severity": "critical",
+      "summary": "Brake system may not be working properly or brake fluid may be low.",
+      "driver_action": "Stop immediately and do not continue driving until the brake system is checked.",
+      "manual_pages": [89, 92, 93]
+    },
+    {
+      "id": "brake_yellow",
+      "name": "Brake system warning light (yellow)",
+      "aliases": ["yellow brake warning", "regenerative brake warning"],
+      "severity": "high",
+      "summary": "Cooperative regenerative brake or electronically driven intelligent brake system may not be functioning properly.",
+      "driver_action": "Drive only if safe to the nearest service point or have the vehicle towed if the red brake warning is also on.",
+      "manual_pages": [89, 93]
+    },
+    {
+      "id": "charge_warning",
+      "name": "Charge warning light",
+      "aliases": ["charging system", "battery charging warning", "alternator warning"],
+      "severity": "high",
+      "summary": "Charging system may not be functioning properly.",
+      "driver_action": "Do not continue driving if the light remains on. Have the charging system checked promptly.",
+      "manual_pages": [89, 93]
+    },
+    {
+      "id": "power_limitation",
+      "name": "Power limitation indicator light",
+      "aliases": ["power reduced", "limited power", "reduced performance"],
+      "severity": "medium",
+      "summary": "Vehicle power is reduced due to low battery, temperature, or system output limitation.",
+      "driver_action": "Drive carefully, follow the message shown on the display, and refuel if low fuel is also present.",
+      "manual_pages": [90, 100]
+    }
+  ]
+}

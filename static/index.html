@@ -1,0 +1,67 @@
+﻿<!doctype html>
+<html lang="sr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nissan e-POWER Dijagnostika</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <p class="eyebrow">GitHub-ready lokalna dijagnostika</p>
+        <h1>Nissan e-POWER dijagnostički asistent</h1>
+        <p class="lede">
+          Upiši problem, poruku sa ekrana ili naziv lampice. Po želji dodaj sliku ili screenshot da aplikacija pokuša da prepozna šta je prikazano.
+        </p>
+        <div id="configBanner" class="banner muted">Učitavanje konfiguracije...</div>
+      </section>
+
+      <section class="panel form-panel">
+        <label for="query" class="label">Opis problema ili komande</label>
+        <textarea id="query" placeholder="Primjer: upalila se narandžasta lampica motora i piše Engine malfunction Service now"></textarea>
+
+        <div class="upload-row">
+          <div>
+            <label for="image" class="label">Slika ili screenshot</label>
+            <input id="image" type="file" accept="image/*" />
+          </div>
+          <div id="imageMeta" class="image-meta">Nema odabrane slike.</div>
+        </div>
+
+        <div class="actions">
+          <button id="searchBtn" class="btn btn-secondary">Analiziraj tekst</button>
+          <button id="analyzeBtn" class="btn btn-primary">Analiziraj tekst + sliku</button>
+        </div>
+      </section>
+
+      <section id="resultPanel" class="panel hidden">
+        <div class="result-head">
+          <div>
+            <p class="label">Rezultat</p>
+            <h2 id="resultTitle">-</h2>
+          </div>
+          <span id="severityBadge" class="badge">-</span>
+        </div>
+        <p id="resultOverview" class="result-overview"></p>
+        <p id="resultNextSteps" class="result-next"></p>
+        <div id="notes" class="notes"></div>
+      </section>
+
+      <section id="matchesPanel" class="panel hidden">
+        <div class="grid two-col">
+          <div>
+            <h3>Najbliže lampice / upozorenja</h3>
+            <div id="warningMatches" class="stack"></div>
+          </div>
+          <div>
+            <h3>Reference iz priručnika</h3>
+            <div id="chunkMatches" class="stack"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
